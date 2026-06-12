@@ -1,0 +1,91 @@
+/*
+ * FreeRTOS V202212.00
+ * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * https://www.FreeRTOS.org
+ * https://github.com/FreeRTOS
+ *
+ */
+
+#ifndef FREERTOS_CONFIG_H
+#define FREERTOS_CONFIG_H
+
+/*-----------------------------------------------------------
+ * Application specific definitions.
+ *
+ * These definitions should be adjusted for your particular hardware and
+ * application requirements.
+ *
+ * THESE PARAMETERS ARE DESCRIBED WITHIN THE 'CONFIGURATION' SECTION OF THE
+ * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
+ *
+ * See http://www.freertos.org/a00110.html
+ *----------------------------------------------------------*/
+
+#define configUSE_PREEMPTION		        1           /*抢占式调度器*/
+#define configUSE_IDLE_HOOK			        0
+#define configUSE_TICK_HOOK			        0
+#define configCPU_CLOCK_HZ			        ( ( unsigned long ) 72000000 )
+#define configTICK_RATE_HZ			        ( ( TickType_t ) 1000 )     /*sysyTick 1000就是1ms   这个是频率，如果要变成50ms就要除50而不是乘以50*/
+#define configMAX_PRIORITIES		        ( 5 )
+#define configMINIMAL_STACK_SIZE	        ( ( unsigned short ) 128 )
+#define configTOTAL_HEAP_SIZE		        ( ( size_t ) ( 12 * 1024 ) )
+#define configMAX_TASK_NAME_LEN		        ( 16 )
+#define configUSE_TRACE_FACILITY	        0           /*用于获取系统中所有任务的状态信息 有uxTaskGetSystemState，vTaskGetInfo()*/
+#define configUSE_16_BIT_TICKS		        0
+#define configIDLE_SHOULD_YIELD		        1
+#define configUSE_TIME_SLICING		        1           /*时间片调度 1启动*/
+#define configSUPPORT_DYNAMIC_ALLOCATION    1           //启动动态内存分配
+
+/* Set the following definitions to 1 to include the API function, or zero
+to exclude the API function. */
+
+#define INCLUDE_vTaskPrioritySet		1           /*vTaskPrioritySet设置任务优先级函数的使能/失能--1/0 */
+#define INCLUDE_uxTaskPriorityGet		1           /*uxTaskPriorityGet获取任务优先级函数的使能/失能--1/0 */
+#define INCLUDE_vTaskDelete				1
+#define INCLUDE_vTaskCleanUpResources	0
+#define INCLUDE_vTaskSuspend			1
+#define INCLUDE_vTaskDelayUntil			1
+#define INCLUDE_vTaskDelay				1
+#define INCLUDE_xTaskGetHandle          0           /*xTaskGetHandle获取任务句柄*/
+#define INCLUDE_uxTaskGetStackHighWaterMark     0       /*1启用uxTaskGetStackHighWaterMark获取指定任务的任务栈历史最小剩余堆栈*/
+#define INCLUDE_eTaskGetState           0           /*1启用eTaskGetState获取任务状态*/
+
+/* This is the raw value as per the Cortex-M3 NVIC.  Values can be 255
+(lowest) to 0 (1?) (highest). */
+#define configKERNEL_INTERRUPT_PRIORITY 		255
+/* !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!
+See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY    5
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY ( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - 4) )
+
+
+/* This is the value being used as per the ST library which permits 16
+priority values, 0 to 15.  This must correspond to the
+configKERNEL_INTERRUPT_PRIORITY setting.  Here 15 corresponds to the lowest
+NVIC value of 255. */
+#define configLIBRARY_KERNEL_INTERRUPT_PRIORITY	15
+
+#define xPortPendSVHandler 			PendSV_Handler
+#define vPortSVCHandler				SVC_Handler
+#define xPortSysTickHandler			SysTick_Handler
+
+#endif /* FREERTOS_CONFIG_H */
+
