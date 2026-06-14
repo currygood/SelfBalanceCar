@@ -60,4 +60,4 @@ endif()
 
 set_target_properties(middlewares PROPERTIES POSITION_INDEPENDENT_CODE OFF)
 
-target_link_libraries(middlewares PRIVATE stm32cubemx bsp)
+target_link_libraries(middlewares PRIVATE stm32cubemx bsp freertos)

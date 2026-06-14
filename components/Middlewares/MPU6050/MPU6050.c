@@ -8,7 +8,7 @@
 
 static void MPU6050_Write_Reg(uint8_t RegAddress, uint8_t Data) {
     uint8_t buf[2] = {RegAddress, Data};
-    I2C_Bus_TransmitBlocking(MPU6050_ADDRESS, buf, 2, 100);
+    I2C_Bus_TransmitBlocking(MPU6050_ADDRESS, buf, 2, 5);
 }
 
 void MPU6050_Init()

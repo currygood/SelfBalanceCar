@@ -7,7 +7,7 @@ MPU6050陀螺仪加速度模块
 #include <stdbool.h>
 
 
-#define MPU6050_ADDRESS         0xD0
+#define MPU6050_ADDRESS         0xD0    //0x68<<1 == 0xD0
 
 #define MPU6050_ADDRESS_Read    MPU6050_ADDRESS | 0x01
 #define MPU6050_ADDRESS_Write   MPU6050_ADDRESS | 0x00

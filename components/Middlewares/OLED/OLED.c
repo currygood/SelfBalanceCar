@@ -77,7 +77,7 @@ void OLED_WriteCommand(uint8_t Command) {
     uint8_t buf[3];
     buf[0] = OLED_WRITE_COMMAND_ADD;  // 0x00
     buf[1] = Command;
-    I2C_Bus_TransmitBlocking(OLED_ADDRESS << 1, buf, 2, 100);
+    I2C_Bus_TransmitBlocking(OLED_ADDRESS << 1, buf, 2, 5);
 }
 
 /**
@@ -91,7 +91,7 @@ void OLED_WriteData(uint8_t *Data, uint8_t Count) {
     uint8_t buf[1 + Count];
     buf[0] = OLED_WRITE_DATA_ADD;     // 0x40
     for (int i = 0; i < Count; i++) buf[1 + i] = Data[i];
-    I2C_Bus_TransmitBlocking(OLED_ADDRESS << 1, buf, 1 + Count, 100);
+    I2C_Bus_TransmitBlocking(OLED_ADDRESS << 1, buf, 1 + Count, 5);
 }
 
 /*********************通信协议*/

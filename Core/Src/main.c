@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include "Ultrasonicwave_Comm.h"
 #include "DWT.h"
+#include "Ult_Avoid.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,35 +119,42 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  bool isCanSendMPU6050=true;
+  // bool isCanSendMPU6050=true;
+  bool isAvoid=false;
   while (1)
   {
-    MPU6050_Data_Struct data;
-    // 等待总线空闲再发起 
-    if(isCanSendMPU6050) MPU6050_Request_Data();
+    isAvoid=false;
+    // MPU6050_Data_Struct data;
+    // // 等待总线空闲再发起 
+    // if(isCanSendMPU6050) MPU6050_Request_Data();
 
-    if(MPU6050_Parse_Data(&data))
-    {
-      isCanSendMPU6050=true;
-    }
-    else
-      isCanSendMPU6050=false;
+    // if(MPU6050_Parse_Data(&data))
+    // {
+    //   isCanSendMPU6050=true;
+    // }
+    // else
+    //   isCanSendMPU6050=false;
 
-    uint8_t tempStr[40];
-    snprintf((char*)tempStr, sizeof tempStr, "%d %d", data.Accx, data.AccY);
-    OLED_ClearArea(0,0,128,16);
-    OLED_ShowString(0, 0, (char*)tempStr, OLED_8X16);
+    // uint8_t tempStr[40];
+    // snprintf((char*)tempStr, sizeof tempStr, "%d %d", data.Accx, data.AccY);
+    // OLED_ClearArea(0,0,128,16);
+    // OLED_ShowString(0, 0, (char*)tempStr, OLED_8X16);
     
     Ult_TrigGetDistance(NULL);
-    HAL_Delay(50);
+    HAL_Delay(20);  //目前测试用延时，后面会有任务通知
     uint16_t distance = Ult_GetDistance();
-    uint8_t tempStr2[20];
-    snprintf(tempStr2,sizeof tempStr2, "dis:%d",distance);
-    OLED_ClearArea(0,16,128,16);
+    uint16_t filtered_dist = Ult_GetFilteredDistance(distance);
+    if(isNeedAvoid(filtered_dist))
+      isAvoid=true;
+    uint8_t tempStr3[20],tempStr2[20];
+    snprintf(tempStr2, sizeof tempStr2, "dis:%d",distance);
+    snprintf(tempStr3,sizeof tempStr3, "Is avoid:%s",isAvoid?"need":"not");
+    OLED_ClearArea(0,16,128,32);
     OLED_ShowString(0, 16, (char*)tempStr2, OLED_8X16);
+    OLED_ShowString(0, 32, (char*)tempStr3, OLED_8X16);
 
     OLED_Update();
-    HAL_Delay(1000);
+    HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
