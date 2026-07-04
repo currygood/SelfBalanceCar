@@ -45,6 +45,7 @@ set(POSSIBLE_INCLUDES
 	${MW_DIR}/OLED
 	${MW_DIR}/PID
 	${MW_DIR}/Ultrasonicwave_Avoid
+	${MW_DIR}/TaskFolder
 )
 set(EXISTING_INCLUDES)
 foreach(d IN LISTS POSSIBLE_INCLUDES)

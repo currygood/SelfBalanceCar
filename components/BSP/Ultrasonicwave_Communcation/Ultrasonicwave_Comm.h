@@ -6,7 +6,8 @@
 #include <stdint.h>
 #include "FreeRTOS.h"
 #include "task.h"
+#include "event_groups.h"
 
-void Ult_TrigGetDistance(TaskHandle_t taskHandler);
+void Ult_TrigGetDistance(EventGroupHandle_t eventgoup);
 
 uint16_t Ult_GetDistance(void);

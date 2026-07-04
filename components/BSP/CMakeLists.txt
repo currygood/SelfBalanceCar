@@ -27,6 +27,7 @@ set(POSSIBLE_INCLUDES
 	${BSP_DIR}/Moitor
 	${BSP_DIR}/Ultrasonicwave_Communcation
 	${BSP_DIR}/DWT
+	${BSP_DIR}/RTOS_Communication
 )
 set(EXISTING_INCLUDES)
 foreach(d IN LISTS POSSIBLE_INCLUDES)

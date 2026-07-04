@@ -20,7 +20,6 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
-#include "stm32f1xx_hal.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -36,6 +35,10 @@
 #include "Ultrasonicwave_Comm.h"
 #include "DWT.h"
 #include "Ult_Avoid.h"
+#include "BLE_Serial.h"
+#include "MTask.h"
+#include "BLE.h"
+#include "Moitor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -107,13 +110,51 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+  EventGroupHandle_t egHandler=NULL;
+  // 任务通信模块
+  Shared_Init();
+  egHandler = Shared_Get_EventGroupHandler();
+  // 初始化
+  // DWT获取时间戳
   DWT_Init();
-  
-  I2C_Bus_Init();
-  
-  OLED_Init();
 
+  // I2C设备
+  I2C_Bus_Init(egHandler);
+  OLED_Init();
   MPU6050_Init();
+
+  // BLE模块
+  BLE_Init(egHandler);
+
+  // 电机模块
+  Moitor_Init();
+
+  // 任务创建  启动调度器
+  xTaskCreate(Control_Task, "Control_Task",256, NULL, 10, NULL);
+  xTaskCreate(System_Task, "System_Task",256, NULL, 2, NULL);
+  vTaskStartScheduler();
+
+  while(1)
+  {
+    
+  }
+
+  //BLE底层测试
+  // uint8_t bytes[64];
+  // BLE_Serial_Init(NULL);
+
+  // while(1)
+  // {
+  //   if(BLE_Serial_isCanRead())
+  //   {
+  //     BLE_Serial_ReadByte(bytes);
+  //     OLED_ShowString(0, 0, bytes, OLED_6X8);
+  //     OLED_Update();
+  //   }
+
+  //   BLE_Serial_SendBytes("hello world\r\n",sizeof("hello world\r\n"),5);
+  //   HAL_Delay(1000);
+  // }
 
   /* USER CODE END 2 */
 

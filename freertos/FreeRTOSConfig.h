@@ -44,19 +44,24 @@
 #define configUSE_TICK_HOOK			        0
 #define configCPU_CLOCK_HZ			        ( ( unsigned long ) 72000000 )
 #define configTICK_RATE_HZ			        ( ( TickType_t ) 1000 )     /*sysyTick 1000就是1ms   这个是频率，如果要变成50ms就要除50而不是乘以50*/
-#define configMAX_PRIORITIES		        ( 5 )
+#define configMAX_PRIORITIES		        ( 16 )
 #define configMINIMAL_STACK_SIZE	        ( ( unsigned short ) 128 )
-#define configTOTAL_HEAP_SIZE		        ( ( size_t ) ( 12 * 1024 ) )
+#define configTOTAL_HEAP_SIZE		        ( ( size_t ) ( 9 * 1024 ) )
 #define configMAX_TASK_NAME_LEN		        ( 16 )
 #define configUSE_TRACE_FACILITY	        0           /*用于获取系统中所有任务的状态信息 有uxTaskGetSystemState，vTaskGetInfo()*/
 #define configUSE_16_BIT_TICKS		        0
 #define configIDLE_SHOULD_YIELD		        1
 #define configUSE_TIME_SLICING		        1           /*时间片调度 1启动*/
 #define configSUPPORT_DYNAMIC_ALLOCATION    1           //启动动态内存分配
+#define configUSE_TIMERS                    1           //加入软件定时任务支持，才能使用xEventGroupSetBitsFromISR()
+#define configTIMER_TASK_STACK_DEPTH        256         // 定时器服务任务堆栈大小（单位：word，一般 200 左右足够，根据实际需求调整）
+#define configTIMER_TASK_PRIORITY           2           // 根据需要设置，低于中断优先级但高于普通任务
+#define configTIMER_QUEUE_LENGTH            10          // 默认足够
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
 
+#define INCLUDE_xTimerPendFunctionCall  1           //启动定时中断pend
 #define INCLUDE_vTaskPrioritySet		1           /*vTaskPrioritySet设置任务优先级函数的使能/失能--1/0 */
 #define INCLUDE_uxTaskPriorityGet		1           /*uxTaskPriorityGet获取任务优先级函数的使能/失能--1/0 */
 #define INCLUDE_vTaskDelete				1
@@ -73,7 +78,7 @@ to exclude the API function. */
 #define configKERNEL_INTERRUPT_PRIORITY 		255
 /* !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!
 See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
-#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY    5
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY    10
 #define configMAX_SYSCALL_INTERRUPT_PRIORITY ( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - 4) )
 
 

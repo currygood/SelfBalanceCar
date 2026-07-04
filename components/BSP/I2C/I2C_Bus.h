@@ -3,6 +3,18 @@
 
 #include "main.h"
 #include <stdbool.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "event_groups.h"
+
+
+/*
+    可供外部使用的宏定义
+*/
+
+/*
+    可供外部使用的结构体等抽象数据类型
+*/
 
 /* 状态枚举 */
 typedef enum {
@@ -11,8 +23,16 @@ typedef enum {
     I2C_TIMEOUT = 2,
 } I2C_Status;
 
+/*
+    可供外部使用的extern变量
+*/
+
+
+/*
+    对外暴露的API接口
+*/
 /* 初始化 */
-void I2C_Bus_Init(void);
+void I2C_Bus_Init(EventGroupHandle_t eventGroupHandler);
 
 // 发送数据（异步），完成后通过回调或轮询检查状态
 I2C_Status I2C_Bus_TransmitAsync(uint8_t devAddr, uint8_t *data, uint16_t len);

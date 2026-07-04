@@ -17,7 +17,7 @@ OLED显示模块
 #define OLED_WRITE_COMMAND_ADD  0x00
 
 /*FontSize参数取值*/
-/*此参数值不仅用于判断，而且用于计算横向字符偏移，默认值为字体像素宽度*/
+/*此参数值不仅用于判断，而且用于计算横向字符偏移，默认值为字体像素宽度   也是不使用枚举的原因*/
 #define OLED_8X16				8
 #define OLED_6X8				6
 #define OLED_12X24				12
@@ -37,6 +37,7 @@ void OLED_Init(void);
 /*更新函数*/
 void OLED_Update(void);
 void OLED_UpdateArea(int16_t X, int16_t Y, uint8_t Width, uint8_t Height);
+void OLED_Update_RTOS(void);
 
 /*显存控制函数*/
 void OLED_Clear(void);

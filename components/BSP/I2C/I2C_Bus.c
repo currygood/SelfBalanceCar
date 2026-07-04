@@ -1,10 +1,18 @@
 #include "I2C_Bus.h"
 #include "i2c.h"
+#include "Shared.h"
+#include "event_groups.h"
 #include <string.h>
 
+/*
+    内部使用的宏定义
+*/
 #define TX_BUF_SIZE  132
 #define RX_BUF_SIZE  14
 
+/*
+    内部使用的全局变量
+*/
 static uint8_t tx_buf[TX_BUF_SIZE];
 static uint8_t rx_buf[RX_BUF_SIZE];
 
@@ -13,12 +21,30 @@ static volatile bool tx_busy = false;     // 发送 DMA 进行中
 static volatile bool rx_busy = false;     // 接收 DMA 进行中
 static volatile bool rx_complete = false; // 接收完成，数据有效
 
-// 内部辅助函数：等待 I2C 硬件就绪（非阻塞检测）
+
+static EventGroupHandle_t I2C_EventGroupHandler;
+
+/*
+    内部调用的函数
+*/
+
+/**
+ * @brief I2C_Bus内部调用的I2C总线是否空闲的函数
+ * @return true:空闲 false:忙
+*/
 static bool I2C_IsHardwareReady(void) {
     return (HAL_I2C_GetState(&hi2c1) == HAL_I2C_STATE_READY);
 }
 
-// 内部辅助函数：发起 DMA 发送
+/**
+ * @brief I2C_Bus内部调用的发起 DMA 发送
+ * @param devAddr：从设备地址
+ * @param data 要传输的数据 
+ * @param len  多少字节
+ * @return I2C_Status   but只使用了下面的
+ *          I2C_OK = 0, Success
+ *          I2C_BUSY = 1, Busy
+*/
 static I2C_Status I2C_StartTransmit_DMA(uint8_t devAddr, uint8_t *data, uint16_t len) {
     if (tx_busy || rx_busy) return I2C_BUSY;
     if (!I2C_IsHardwareReady()) return I2C_BUSY;
@@ -31,7 +57,15 @@ static I2C_Status I2C_StartTransmit_DMA(uint8_t devAddr, uint8_t *data, uint16_t
     return I2C_OK;
 }
 
-// 内部辅助函数：发起 DMA 接收（内存读取模式）
+/**
+ * @brief I2C_Bus内部调用的发起 DMA 接收（内存读取模式）
+ * @param devAddr：从设备地址
+ * @param regAddr 要获取的地址
+ * @param size  多少字节
+ * @return I2C_Status   but只使用了下面的
+ *          I2C_OK = 0, Success
+ *          I2C_BUSY = 1, Busy
+*/
 static I2C_Status I2C_StartReceive_DMA(uint8_t devAddr, uint8_t regAddr, uint16_t size) {
     if (tx_busy || rx_busy) return I2C_BUSY;
     if (!I2C_IsHardwareReady()) return I2C_BUSY;
@@ -47,11 +81,18 @@ static I2C_Status I2C_StartReceive_DMA(uint8_t devAddr, uint8_t regAddr, uint16_
     return I2C_OK;
 }
 
-/* 对外接口实现 */
-void I2C_Bus_Init(void) {
+/* 
+    对外暴露的API接口实现 
+*/
+
+/**
+ * @brief I2C_Bus初始化
+*/
+void I2C_Bus_Init(EventGroupHandle_t eventGroupHandler) {
     tx_busy = false;
     rx_busy = false;
     rx_complete = false;
+    I2C_EventGroupHandler = eventGroupHandler;
 }
 
 I2C_Status I2C_Bus_TransmitAsync(uint8_t devAddr, uint8_t *data, uint16_t len) {
@@ -124,6 +165,12 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
         rx_busy = false;
         rx_complete = true;
         tx_busy=false;
+        if(I2C_EventGroupHandler)
+        {
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+            xEventGroupSetBitsFromISR(I2C_EventGroupHandler, EVENT_I2C_RX_FINISH, &xHigherPriorityTaskWoken);
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        }
     }
 }
 
