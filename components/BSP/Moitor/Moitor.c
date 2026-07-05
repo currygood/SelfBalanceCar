@@ -26,7 +26,7 @@
 #define UPDATE_PERIOD_SEC  0.040f
 #define PWM_ABSOLUTE_MAX   1000
 // 滤波系数：0.0 到 1.0 之间。数值越大越平滑，但延迟越高。
-#define SPEED_FILTER_ALPHA 0.0f         //目前测试只用了原始速度，没有滤波，后续可以调节这个值来实现滤波
+#define SPEED_FILTER_ALPHA 0.5f         //目前测试只用了原始速度，没有滤波，后续可以调节这个值来实现滤波
 
 
 

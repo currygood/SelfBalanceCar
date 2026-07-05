@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 #define NEEDAVOID_LEN 10     // 最小安全距离 (cm)
-#define NEEDAVOID_COUNT 1   // 连续多少次触发了最小安全距离就提醒
+#define NEEDAVOID_COUNT 2   // 连续多少次触发了最小安全距离就提醒
 
 // 滤波
 #define FILTER_WINDOW_SIZE 5

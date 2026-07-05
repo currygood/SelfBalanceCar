@@ -17,7 +17,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MECHANICAL_MEDIAN               0.0f       //机械中值
+#define MECHANICAL_MEDIAN               -0.1f       //机械中值
 #define ENCODER_GET_PERIOD              40          //编码器获取周期，单位ms
 #define MOTOR_DEAD_ZONE_COMPENSATION    0           //电机死区补偿
 #define CAR_FALL_ANGLE                  45.0f       //小车摔倒的边界角度
@@ -32,7 +32,7 @@ static uint8_t PulseStr[100];
 static float angleAcc = 0;
 static float angleGyro = 0;
 static float angleSmooth = 0;
-static bool isPidOn=true;
+static bool isPidOn=false;
 static int16_t AvePWM = 0;
 static int16_t DifPWM = 0;
 static int16_t LeftPWM = 0;
@@ -89,17 +89,6 @@ void Control_Task(void *params)
     {
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // 5ms 周期
 
-        if(AvoidNeed)
-        {
-            // 避障逻辑
-            // 这里可以添加避障的控制逻辑，比如调整转向环的目标值等
-            // 目前直接停下
-            UprightPid.Target = MECHANICAL_MEDIAN; // 直立环目标值保持不变
-            SpeedPid.Target = 0; // 速度环目标值保持不变
-            TurnPID.Target = 0; // 转向环目标值保持不变
-            // 能立住就行
-        }
-
         bits = xEventGroupWaitBits(MTask_SystemEventGroup, EVENT_I2C_RX_FINISH, pdTRUE, pdFALSE, 0);
         if(bits & EVENT_I2C_RX_FINISH)
         {
@@ -135,12 +124,14 @@ void Control_Task(void *params)
                 DifSpeed = LeftSpeed - RightSpeed;
 
                 Moitor_GetSpeed(&filteredSpeedStruct);    // 获取滤波后的
-                Moitor_GetRawSpeed(&rawSpeedStruct);      // 获取原始的
-                // 计算滤波后的平均速度
-                AveSpeed = (filteredSpeedStruct.speed_rpm[Moitor_Left] + filteredSpeedStruct.speed_rpm[Moitor_Right]) / 2.0f;
+
+                // 调试滤波用
+                // Moitor_GetRawSpeed(&rawSpeedStruct);      // 获取原始的
+                // // 计算滤波后的平均速度
+                // AveSpeed = (filteredSpeedStruct.speed_rpm[Moitor_Left] + filteredSpeedStruct.speed_rpm[Moitor_Right]) / 2.0f;
                 
-                // 计算原始的平均速度
-                RawAveSpeed = (rawSpeedStruct.speed_rpm[Moitor_Left] + rawSpeedStruct.speed_rpm[Moitor_Right]) / 2.0f;
+                // // 计算原始的平均速度
+                // RawAveSpeed = (rawSpeedStruct.speed_rpm[Moitor_Left] + rawSpeedStruct.speed_rpm[Moitor_Right]) / 2.0f;
 
                 if(isPidOn)
                 {
@@ -329,7 +320,17 @@ void System_Task(void *params)
 
         // 获取前方障碍物距离
         Ult_TrigGetDistance(MTask_SystemEventGroup);
-
+        bits = xEventGroupWaitBits(MTask_SystemEventGroup,EVENT_GPIO_ECHO,pdTRUE,pdFALSE,pdMS_TO_TICKS(0));
+        if(bits&EVENT_GPIO_ECHO)
+        {
+            uint16_t distance_cm = Ult_GetDistance();
+            uint16_t filtered_distance_cm = Ult_GetFilteredDistance(distance_cm);
+            AvoidNeed = isNeedAvoid(filtered_distance_cm);  // 给主控任务一个标志，告诉它是否需要避障
+        }
+        else
+        {
+            AvoidNeed = false; // 没有收到回波信号，认为没有障碍物
+        }
 
         bits = xEventGroupWaitBits(MTask_SystemEventGroup,EVENT_UART_RX_FINISH,pdTRUE,pdFALSE,pdMS_TO_TICKS(0));
         if(bits&EVENT_UART_RX_FINISH)
@@ -341,6 +342,15 @@ void System_Task(void *params)
             switch(command.type)
             {
                 case Move_BCommand:
+                    if(AvoidNeed)   // 前方由障碍物，只能后退
+                    {
+                        if(command.power>0)
+                        {
+                            SpeedPid.Target = 0; // 避障时速度环目标值为 0
+                        }
+                        TurnPID.Target = 0; // 避障时转向环目标值为 0
+                        break;
+                    }
                     SpeedPid.Target = command.power; // 速度环目标值为蓝牙命令的 power
                     TurnPID.Target = -command.direction; // 直立环目标值为蓝牙命令的 direction
 
@@ -420,13 +430,6 @@ void System_Task(void *params)
 
                     break;
             }
-        }
-        else if(bits&EVENT_GPIO_ECHO)
-        {
-            // 获取前方障碍物距离
-            Ult_TrigGetDistance(MTask_SystemEventGroup);
-            uint16_t distance_cm = Ult_GetDistance();
-            AvoidNeed = isNeedAvoid(distance_cm);  // 给主控任务一个标志，告诉它是否需要避障
         }
 
 
