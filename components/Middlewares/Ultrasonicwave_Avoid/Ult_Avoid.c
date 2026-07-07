@@ -6,7 +6,15 @@ static uint16_t dist_buffer[FILTER_WINDOW_SIZE] = {0};
 static uint8_t  buffer_index = 0;
 static uint16_t last_final_dist = 100; // 初始假设在1米处
 
-// 辅助函数：冒泡排序取中值
+/**
+ * @note 内部函数
+*/
+
+/**
+ * @brief 辅助函数：冒泡排序取中值
+ * @param a 数组指针
+ * @param n 数组长度
+*/
 static void sort(uint16_t a[], uint8_t n) {
     for (uint8_t i = 0; i < n - 1; i++) {
         for (uint8_t j = 0; j < n - i - 1; j++) {
@@ -19,6 +27,16 @@ static void sort(uint16_t a[], uint8_t n) {
     }
 }
 
+
+/**
+ * @note 对外API接口
+*/
+
+/**
+ * @brief 获取过滤后的距离值（厘米）
+ * @param raw_len 原始距离值（厘米）
+ * @return uint16_t 过滤后的距离值（厘米）
+*/
 uint16_t Ult_GetFilteredDistance(uint16_t raw_len)
 {
     // --- 策略1：剔除超时错误值 ---
@@ -56,6 +74,11 @@ uint16_t Ult_GetFilteredDistance(uint16_t raw_len)
     return median;
 }
 
+/**
+ * @brief 判断是否需要避障
+ * @param len 距离值
+ * @return bool 是否需要避障
+*/
 bool isNeedAvoid(uint16_t len)
 {
     static int needAvoid_Count = 0;

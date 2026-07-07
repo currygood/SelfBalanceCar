@@ -46,7 +46,6 @@ uint8_t* I2C_Bus_GetReceivedData(void);
 // 手动清除接收完成标志（若不想用 GetReceivedData 的自动清除）
 void I2C_Bus_ClearRxFlag(void);
 
-/* ----- 阻塞辅助函数（用于初始化等低频操作）----- */
 // 阻塞发送（带超时，ms），内部调用异步 + 等待
 I2C_Status I2C_Bus_TransmitBlocking(uint8_t devAddr, uint8_t *data, uint16_t len, uint32_t timeoutMs);
 // 阻塞读取

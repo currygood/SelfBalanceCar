@@ -29,6 +29,10 @@ static EventGroupHandle_t I2C_EventGroupHandler;
 */
 
 /**
+ * @note 内部函数
+*/
+
+/**
  * @brief I2C_Bus内部调用的I2C总线是否空闲的函数
  * @return true:空闲 false:忙
 */
@@ -81,8 +85,8 @@ static I2C_Status I2C_StartReceive_DMA(uint8_t devAddr, uint8_t regAddr, uint16_
     return I2C_OK;
 }
 
-/* 
-    对外暴露的API接口实现 
+/**
+ * @note 对外API接口
 */
 
 /**
@@ -152,6 +156,10 @@ I2C_Status I2C_Bus_ReceiveBlocking(uint8_t devAddr, uint8_t regAddr, uint8_t *ou
         if (HAL_GetTick() - start > timeoutMs) return I2C_TIMEOUT;
     }
 }
+
+/**
+ * @note 内部函数
+*/
 
 /* HAL 回调函数 */
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {

@@ -14,8 +14,13 @@
 #define DWT_CTRL_CYCCNTENA  (1<<0)      //DWT的CYCCNT使能位
 
 
-/*
-    对外暴露的API接口实现
+/**
+ * @note 对外API接口
+*/
+
+/**
+ * @brief DWT初始化
+ * @return uint8_t 初始化是否成功，1成功，0失败
 */
 uint8_t DWT_Init()
 {
@@ -33,6 +38,10 @@ uint8_t DWT_Init()
         return 0;
 }
 
+/**
+ * @brief DWT获取当前嘀嗒时间
+ * @return uint64_t 当前Cycle Count值
+*/
 uint64_t DWT_Get_Cnt()
 {
     return DWT_CYCCNT;

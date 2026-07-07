@@ -6,11 +6,23 @@
 #include <string.h>
 #include <stdlib.h>
 
+/**
+ * @brief MPU6050寄存器写入
+ * @param RegAddress 寄存器地址
+ * @param Data 要写入的数据
+*/
 static void MPU6050_Write_Reg(uint8_t RegAddress, uint8_t Data) {
     uint8_t buf[2] = {RegAddress, Data};
     I2C_Bus_TransmitBlocking(MPU6050_ADDRESS<<1, buf, 2, 5);
 }
 
+/**
+ * @note 对外API接口
+*/
+
+/**
+ * @brief MPU6050初始化
+*/
 void MPU6050_Init()
 {
     /*MPU6050寄存器初始化，需要对照MPU6050手册的寄存器描述配置，此处仅配置了部分重要的寄存器*/
@@ -25,15 +37,8 @@ void MPU6050_Init()
 }
 
 /**
-  * 函    数：发起 MPU6050 数据采集请求
-  * 说    明：调用后立即返回，不阻塞 CPU
-  */
-/*笔记：
-以下从三个层面解释它为什么能“自动”实现：
-这不是 MPU6050 的规定，而是 I2C 协议的标准
-你写的“先写地址、再重复起始、再读数据”的时序，在 I2C 官方标准里被称为 “Random Read（随机读取）” 或 “Memory Read（内存读取）”。
-几乎所有的 I2C 传感器（EEPROM、陀螺仪、温湿度计）读取寄存器时都用这一套标准时序。
-芯片设计公司（如 ST 意法半导体）深知这一点，所以在设计硬件 I2C 模块时，直接在 硬件电路（逻辑门状态机） 里写死了这套逻辑。
+  * @brief 发起 MPU6050 数据采集请求（异步）
+  * @note 调用后立即返回，不阻塞 CPU
 */
 void MPU6050_Request_Data(void) {
      // 向 0x3B 地址发起 14 字节的 DMA 读取请求
@@ -41,9 +46,10 @@ void MPU6050_Request_Data(void) {
 }
 
 /**
-  * 函    数：解析读取到的原始数据
-  * 参    数：Data 指向你的数据结构体
-  */
+  * @brief 解析读取到的原始数据
+  * @param Data 指向数据结构体的指针
+  * @return bool 解析是否成功
+*/
 bool MPU6050_Parse_Data(MPU6050_Data_Struct *Data)
 {
     uint8_t *buffer = I2C_Bus_GetReceivedData();

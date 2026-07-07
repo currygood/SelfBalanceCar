@@ -6,7 +6,9 @@ MPU6050陀螺仪加速度模块
 #include <stdint.h>
 #include <stdbool.h>
 
-
+/*
+    可供外部使用的宏定义
+*/
 #define MPU6050_ADDRESS  0x68   // 7-bit address
 
 #define MPU6050_ADDRESS_Read    MPU6050_ADDRESS | 0x01
@@ -36,11 +38,26 @@ MPU6050陀螺仪加速度模块
 #define	MPU6050_PWR_MGMT_2		0x6C
 #define	MPU6050_WHO_AM_I		0x75
 
+/*
+    可供外部使用的结构体等抽象数据类型
+*/
 typedef struct
 {
     int16_t AccX,AccY,AccZ;         //三轴加速度
     int16_t GyroX,GyroY,GyroZ;      //三轴陀螺仪
 }MPU6050_Data_Struct;
+
+/*
+    可供外部使用的extern变量
+*/
+
+/*
+    对外暴露的API接口
+*/
+// MPU6050初始化
+void MPU6050_Init(void);
+// MPU6050获取数据
+void MPU6050_GetData(MPU6050_Data_Struct *pData);
 
 // 根据MPU6050设计来的  加速度和陀螺仪都是满量程
 #define PI                  3.14159f  //1g
@@ -72,7 +89,11 @@ typedef struct
 */
 #define COMPLEMENTARY_FILTER(AngleAcc,AngleGyro)    (((AngleAcc)*ACCELERATION_SHARE)+((AngleGyro)*GYROSCOPE_SHARE))
 
+// MPU6050初始化
 void MPU6050_Init();
 
+// 发起MPU6050数据采集请求（异步）
 void MPU6050_Request_Data(void);
+
+// 解析读取到的原始数据
 bool MPU6050_Parse_Data(MPU6050_Data_Struct *Data);

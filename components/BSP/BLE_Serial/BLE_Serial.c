@@ -19,6 +19,10 @@ volatile bool isCanTx=true;
 
 EventGroupHandle_t BLESerial_System_EventGroup=NULL;
 
+/**
+ * @brief 蓝牙串口初始化
+ * @param eventgroup 事件组句柄，用于通信同步
+*/
 void BLE_Serial_Init(EventGroupHandle_t eventgroup)
 {
     // 启动 DMA 接收（固定长度，非循环模式）
@@ -53,12 +57,18 @@ bool BLE_Serial_isCanRead()
     return rx_complete_flag;
 }
 
+/**
+ * @brief 清除蓝牙串口接收标志
+*/
 void BL_Serial_ClearFlag()
 {
     rx_complete_flag=false;
     memset(rx_dma_buffer,0,sizeof rx_dma_buffer);
 }
 
+/**
+ * @note 内部函数
+*/
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {

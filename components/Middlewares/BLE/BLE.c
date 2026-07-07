@@ -2,11 +2,24 @@
 #include "BLE_Serial.h"
 #include <stdint.h>
 
+/**
+ * @note 对外API接口
+*/
+
+/**
+ * @brief BLE模块初始化
+ * @param eventgrouphandler 事件组句柄
+*/
 void BLE_Init(EventGroupHandle_t eventgrouphandler)
 {
     BLE_Serial_Init( eventgrouphandler);
 }
 
+/**
+ * @brief 解析蓝牙接收到的命令数据
+ * @param Com 原始命令数据缓冲区
+ * @return BLE_Command 解析后的命令结构体
+*/
 BLE_Command BLE_AnalyseCommand(uint8_t *Com)
 {
     BLE_Command ReCommand;
@@ -16,7 +29,7 @@ BLE_Command BLE_AnalyseCommand(uint8_t *Com)
         ReCommand.type=Fault;
         return ReCommand;
     }
-    // uint8_t checknum = (Com[0]+Com[1]+Com[2]+Com[3]+Com[4])&0xFF;            //先不处理这个
+    uint8_t checknum = (Com[0]+Com[1]+Com[2]+Com[3]+Com[4])&0xFF;            //先不处理这个
     if(Com[0]!=0xAA)
     {
         ReCommand.type=Fault;
@@ -77,13 +90,7 @@ BLE_Command BLE_AnalyseCommand(uint8_t *Com)
             else
                 ReCommand.type=PID_OFF;
             break;
-
-        // case 0x10:          //调试时候用,调节机械中值
-        //     if(Com[2]==0x01)
-        //         ReCommand.type=MECHANICAL_MEDIAN_ADD;
-        //     else
-        //         ReCommand.type=MECHANICAL_MEDIAN_Sub;
-            
+    
         default:
             ReCommand.type=Fault;
             break;

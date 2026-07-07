@@ -2,20 +2,32 @@
 
 #define KI_MAX      2000
 
+/**
+ * @note 对外API接口
+*/
+
+/**
+ * @brief PID结构体初始化
+ * @param pid PID结构体指针
+*/
 void PID_Init(PID_Str *pid)
 {
     pid->Actual=0;
     pid->Error0=0;
     pid->Error1=0;
     pid->ErrorInt=0;
-    pid->Out=0;
+    pid->Out = 0;
 }
+
+/**
+ * @note 对外API接口
+*/
 
 /**
  * @brief PID更新函数
  * @param pid PID结构体指针
  * @param gyro_rate 传入陀螺仪处理后的角速度（度/秒）
- */
+*/
 void PID_Update(PID_Str *pid, float gyro_rate)
 {
     /* 1. 获取本次误差 */

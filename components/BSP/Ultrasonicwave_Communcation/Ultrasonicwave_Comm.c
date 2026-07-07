@@ -15,7 +15,11 @@ volatile static uint64_t Dis_Last_TimeTick=0;
 volatile static uint64_t Dis_TimeTick_Get=0;
 
 
-/* 
+/**
+ * @note 内部函数
+*/
+
+/*
  * 延时函数：为了产生大于10us的高电平给超声波模块，开始测量距离
  * 72MHz 下，i=20 大约能产生 200KHz-300KHz 的波形
  */
@@ -25,6 +29,14 @@ static void Ult_Delay(void)
     while(i--);
 }
 
+/**
+ * @note 对外API接口
+*/
+
+/**
+ * @brief 触发超声波模块测量距离
+ * @param eventgoup 事件组句柄，用于通知其他任务距离测量完成
+*/
 void Ult_TrigGetDistance(EventGroupHandle_t eventgoup)
 {
     Dis_Last_TimeTick = Dis_TimeTick_Get =  0;   // 新增
@@ -34,7 +46,11 @@ void Ult_TrigGetDistance(EventGroupHandle_t eventgoup)
     HAL_GPIO_WritePin(Trig_GPIO_Port, Trig_Pin, 0);
 }
 
-
+/**
+ * @brief 获取当前距离值（厘米）
+ * @return uint16_t 当前距离值（厘米）
+ * @note 该函数在获取距离值后，会自动更新上次测量的时间戳
+*/
 uint16_t Ult_GetDistance(void)
 {
     uint64_t diff_cycles = Dis_TimeTick_Get;
@@ -43,6 +59,14 @@ uint16_t Ult_GetDistance(void)
     return (uint16_t)distance_cm;
 }
 
+/**
+ * @note 内部函数
+*/
+
+/**
+ * @brief 超声波模块GPIO外部中断回调
+ * @param GPIO_Pin 中断的引脚号
+*/
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if(GPIO_Pin==Echo_Pin)

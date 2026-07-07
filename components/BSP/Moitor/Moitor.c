@@ -126,6 +126,9 @@ void Moitor_Update_Speed(void)
     }
 }
 
+/**
+ * @brief 电机初始化
+*/
 void Moitor_Init()
 {
     HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
@@ -140,6 +143,12 @@ void Moitor_Init()
     }
 }
 
+/**
+ * @brief 直接设置PWM值控制电机
+ * @param moitorNum 电机序号：Moitor_Left 或 Moitor_Right
+ * @param pwm PWM值，范围：-1000~1000
+ * @return bool 设置是否成功
+*/
 bool Moitor_Set_PWMDirect(Moitor_SerialNum moitorNum,int16_t pwm)
 {
     if(pwm<-PWM_MAX || pwm>PWM_MAX)
@@ -174,6 +183,11 @@ bool Moitor_Set_PWMDirect(Moitor_SerialNum moitorNum,int16_t pwm)
     Moitor_Set_Compare(moitorNum,abs(pwm));
 }
 
+/**
+ * @brief 设置左电机速度
+ * @param speed 目标速度（rpm），正为正向，负为反向
+ * @return bool 设置是否成功
+*/
 bool Moitor_Set_Left_Speed(float speed)
 {
     if(speed<-RPM_MAX||speed>RPM_MAX)
@@ -193,6 +207,11 @@ bool Moitor_Set_Left_Speed(float speed)
     return true;
 }
 
+/**
+ * @brief 设置右电机速度
+ * @param speed 目标速度（rpm），正为正向，负为反向
+ * @return bool 设置是否成功
+*/
 bool Moitor_Set_Right_Speed(float speed)
 {
     if(speed<-RPM_MAX||speed>RPM_MAX)
@@ -212,6 +231,10 @@ bool Moitor_Set_Right_Speed(float speed)
     return true;
 }
 
+/**
+ * @brief 获取滤波后的电机速度
+ * @param MSpeed 速度结构体指针，用于存储滤波后的速度值
+*/
 void Moitor_GetSpeed(MoitorSpeed_Str *MSpeed)
 {
     for(uint8_t i=0;i<MOITOR_NUM;++i)
