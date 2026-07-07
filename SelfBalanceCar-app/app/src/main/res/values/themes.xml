@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SelfBalanceCar" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <!-- Use platform theme to ensure resource linking succeeds on headless build -->
+        <item name="android:windowBackground">?android:colorBackground</item>
+    </style>
+</resources>

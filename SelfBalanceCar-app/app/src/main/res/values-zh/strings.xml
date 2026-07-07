@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">平衡车遥控</string>
+    <string name="refresh_paired">刷新配对设备</string>
+    <string name="start_scan">开始扫描</string>
+    <string name="stop_scan">停止扫描</string>
+    <string name="paired_devices">配对设备</string>
+    <string name="discovered_devices">发现的设备</string>
+    <string name="last_label">上次：</string>
+    <string name="connected">已连接</string>
+    <string name="disconnected">未连接</string>
+    <string name="joystick">摇杆</string>
+    <string name="pid_panel">PID 面板</string>
+    <string name="kp">Kp</string>
+    <string name="ki">Ki</string>
+    <string name="kd">Kd</string>
+    <string name="send_pid">发送 PID</string>
+    <string name="connect">连接</string>
+    <string name="disconnect">断开</string>
+    <string name="throttle">动力：</string>
+    <string name="steering">方向：</string>
+    <string name="settings">设置</string>
+    <string name="language">语言</string>
+    <string name="lang_en">English</string>
+    <string name="lang_zh">中文</string>
+    <string name="refresh_failed_title">需要权限</string>
+    <string name="refresh_failed_message">扫描/连接蓝牙需要权限。</string>
+    <string name="open_settings">打开设置</string>
+    <string name="retry">重试</string>
+    <string name="get_pid">获取 PID</string>
+    <string name="pid_enable">启用 PID</string>
+    <string name="pid_disable">关闭 PID</string>
+    <string name="ring_angle">角度环</string>
+    <string name="ring_speed">速度环</string>
+    <string name="ring_steer">转向环</string>
+    <string name="back">返回</string>
+</resources>

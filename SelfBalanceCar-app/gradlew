@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+DIST_VERSION=8.2.2
+DIST_NAME=gradle-${DIST_VERSION}-bin.zip
+DIST_URL="https://services.gradle.org/distributions/${DIST_NAME}"
+ROOT="$(cd "$(dirname "$0")" && pwd -P)"
+DEST="$ROOT/.gradle/wrapper/dists"
+if [ ! -d "$DEST/gradle-${DIST_VERSION}" ]; then
+  echo "Downloading ${DIST_URL} ..."
+  tmpfile="/tmp/${DIST_NAME}"
+  curl -L -o "$tmpfile" "${DIST_URL}"
+  mkdir -p "$DEST"
+  unzip -q "$tmpfile" -d "$DEST"
+  rm -f "$tmpfile"
+fi
+GRADLE_HOME="$DEST/gradle-${DIST_VERSION}"
+exec "$GRADLE_HOME/bin/gradle" "$@"
